@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "@chakra-ui/react": "^3.22.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "dayjs": "^1.11.13",
+    "framer-motion": "^12.23.6",
+    "react-color": "^2.19.3",
+    "react-confetti": "^6.4.0"
+  }
+}
