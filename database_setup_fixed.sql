@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS public.transactions (
   amount DECIMAL(12, 2) NOT NULL,
   description TEXT,
   category_id UUID REFERENCES public.categories(id),
+  category_name VARCHAR(100),
   transaction_date DATE NOT NULL,
   type VARCHAR(20) CHECK (type IN ('income', 'expense')),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -42,6 +43,7 @@ CREATE TABLE IF NOT EXISTS public.budgets (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID REFERENCES public.user_profiles(id) ON DELETE CASCADE,
   category_id UUID REFERENCES public.categories(id),
+  category_name VARCHAR(100),
   amount DECIMAL(12, 2) NOT NULL,
   period VARCHAR(20) DEFAULT 'monthly',
   start_date DATE NOT NULL,
@@ -85,3 +87,27 @@ CREATE POLICY "Users can view own transactions" ON public.transactions
 
 CREATE POLICY "Users can view own budgets" ON public.budgets
   FOR ALL USING (auth.uid() = user_id); 
+
+-- 1. Add category_name columns if not exist
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS category_name VARCHAR(100);
+ALTER TABLE budgets ADD COLUMN IF NOT EXISTS category_name VARCHAR(100);
+
+-- 2. Migrate data from category_id to category_name (preserves old records)
+UPDATE transactions t
+SET category_name = c.name
+FROM categories c
+WHERE t.category_id = c.id;
+
+UPDATE budgets b
+SET category_name = c.name
+FROM categories c
+WHERE b.category_id = c.id;
+
+-- 3. Remove category_id columns and constraints
+ALTER TABLE transactions DROP CONSTRAINT IF EXISTS transactions_category_id_fkey;
+ALTER TABLE budgets DROP CONSTRAINT IF EXISTS budgets_category_id_fkey;
+ALTER TABLE transactions DROP COLUMN IF EXISTS category_id;
+ALTER TABLE budgets DROP COLUMN IF EXISTS category_id;
+
+-- 4. (Optional) Drop categories table if you are done with it
+-- DROP TABLE IF EXISTS categories; 

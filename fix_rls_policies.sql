@@ -55,6 +55,23 @@ CREATE POLICY "Users can update own budgets" ON public.budgets
 CREATE POLICY "Users can delete own budgets" ON public.budgets
   FOR DELETE USING (auth.uid() = user_id);
 
+-- Create policies for user_credits
+CREATE POLICY "Users can view own credits" ON public.user_credits
+  FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own credits" ON public.user_credits
+  FOR UPDATE USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert own credits" ON public.user_credits
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+-- Create policies for credit_transactions
+CREATE POLICY "Users can view own credit transactions" ON public.credit_transactions
+  FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert own credit transactions" ON public.credit_transactions
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+
 -- Verify policies are created
 SELECT schemaname, tablename, policyname, permissive, roles, cmd, qual, with_check 
 FROM pg_policies 

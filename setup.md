@@ -24,12 +24,13 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 NEXT_PUBLIC_API_URL=http://localhost:5000/api
 ```
 
-### Step 2: Supabase Setup
+### Step 2: Supabase Database Setup
 
 1. Go to [supabase.com](https://supabase.com) and create a new project
 2. Get your project URL and API keys from Settings > API
 3. Replace the placeholder values in your .env files with your actual Supabase credentials
-4. Run the SQL commands from the README.md file in your Supabase SQL editor
+4. **Run the SQL in `consolidated_migration.sql` in your Supabase SQL editor.**
+   - This will set up all tables, policies, and migrations, including the credit system and category_name migration.
 
 ### Step 3: Start the Application
 
@@ -121,8 +122,8 @@ npm run dev
    - Make sure these ports are available
 
 4. **Database Schema Issues**
-   - Run the SQL commands exactly as provided in the README
-   - Check that all tables and policies are created correctly
+   - Run the SQL in `consolidated_migration.sql` for all schema and migration needs
+   - If you see errors about missing columns or constraints, ensure the migration steps for `category_name` have been run
 
 ### Getting Help
 

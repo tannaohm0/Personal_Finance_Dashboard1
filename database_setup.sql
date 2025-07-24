@@ -80,3 +80,27 @@ ALTER TABLE public.user_profiles
   ADD COLUMN IF NOT EXISTS date_format VARCHAR(20) DEFAULT 'YYYY-MM-DD',
   ADD COLUMN IF NOT EXISTS income_categories TEXT DEFAULT 'Salary, Freelance, Gifts, Investments, Other',
   ADD COLUMN IF NOT EXISTS expense_categories TEXT DEFAULT 'Food, Housing, Transportation, Utilities, Entertainment, Healthcare, Education, Shopping, Personal, Other'; 
+
+-- 1. Add category_name columns if not exist
+ALTER TABLE transactions ADD COLUMN IF NOT EXISTS category_name VARCHAR(100);
+ALTER TABLE budgets ADD COLUMN IF NOT EXISTS category_name VARCHAR(100);
+
+-- 2. Migrate data from category_id to category_name (preserves old records)
+UPDATE transactions t
+SET category_name = c.name
+FROM categories c
+WHERE t.category_id = c.id;
+
+UPDATE budgets b
+SET category_name = c.name
+FROM categories c
+WHERE b.category_id = c.id;
+
+-- 3. Remove category_id columns and constraints
+ALTER TABLE transactions DROP CONSTRAINT IF EXISTS transactions_category_id_fkey;
+ALTER TABLE budgets DROP CONSTRAINT IF EXISTS budgets_category_id_fkey;
+ALTER TABLE transactions DROP COLUMN IF EXISTS category_id;
+ALTER TABLE budgets DROP COLUMN IF EXISTS category_id;
+
+-- 4. (Optional) Drop categories table if you are done with it
+-- DROP TABLE IF EXISTS categories; 

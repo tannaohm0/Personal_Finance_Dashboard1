@@ -1,4 +1,6 @@
 -- Credit System Schema for InvestIQ
+-- This file only manages the credit system (user_credits, credit_transactions).
+-- For category_name migration and main schema changes, see database_setup_fixed.sql
 -- Run this in your Supabase SQL Editor
 
 -- Create user_credits table to track points and levels
